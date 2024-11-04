@@ -59,7 +59,7 @@ parser.add_argument(
     help='Initial learning rate.')
 parser.add_argument(
     '--batch-size', '-b', type=int, default=128, help='Batch size.')
-parser.add_argument('--eval-batch-size', type=int, default=1000)
+parser.add_argument('--eval-batch-size', type=int, default=256)
 
 # optimization options
 parser.add_argument('--momentum', type=float, default=0.9, help='Momentum.')
@@ -347,8 +347,15 @@ class PGD(nn.Module):
 
 
 def main():
-    torch.manual_seed(1)
-    np.random.seed(1)
+    SEED = 1
+    torch.manual_seed(SEED)
+    np.random.seed(SEED)
+    random.seed(SEED)
+    torch.cuda.manual_seed(SEED)
+    torch.cuda.manual_seed_all(SEED)  # If using multi-GPU
+
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
 
     # Load datasets
     train_transform = transforms.Compose(
